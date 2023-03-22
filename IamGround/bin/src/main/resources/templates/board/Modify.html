@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymleaf.org">
+<head>
+<meta charset="UTF-8">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<title>Insert title here</title>
+<link th:href="@{/css/board/modifycss.css}" type="text/css" rel="stylesheet" />
+</head>
+<body>
+	
+<div th:include="common/header.html"></div><br><br>
+<div class="modify">
+	<form class="modify" action="/board/modify" method="post" align="center">
+		<hr width= "800px">
+		<input class="T" th:value="${board.boardTitle}" name='boardTitle'>
+		<hr width= "800px">
+		<textarea th:text="${board.boardContent}" name='boardContent' cols="111" rows="30" ></textarea>		
+		<hr width= "800px">
+		<div class="btn2"><input class="btn" type="submit" value="수정하기"></div>
+		<input type="hidden" th:value="${board.boardNo}" name="boardNo">
+		<input type="hidden" th:value="${board.CategoryCode}" name="categoryCode">
+		<input type="hidden" name="modifiedDate">
+   </form>
+</div>
+          <div class="footer">
+              <p>Copyright (C) 2022 IAMGROUND. All rights reserved.</p>
+          </div>
+</body>
+</html>
+

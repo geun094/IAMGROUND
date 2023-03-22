@@ -1,0 +1,51 @@
+html {
+	height: 100%;
+}
+body {
+	margin: 0;
+	height: 100%;
+}
+p{
+	margin: 0 auto;
+	margin-top: 0 auto;
+}
+
+.modify{
+	display: flex;
+  	align-items: center;
+  	justify-content: center;
+  	flex-direction: column;
+}
+
+.btn{
+	
+	border-radius:10px;
+	width:100px;
+	height:25px;
+	cursor:pointer;
+	border:0px;
+	background: rgba(196, 233, 255, 1);
+} 
+
+.T{
+ 	width:794px;
+  	height:30px;
+  	font-size:12px;
+}
+.btn2{
+	margin-left: 700px;
+}
+.footer {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	height: 50px;
+	width: 100%;
+	background-color: #333;
+	color: white;
+	margin-left: 0;
+	margin-bottom: 0;
+	display: flex;
+	align-items: center;
+	}

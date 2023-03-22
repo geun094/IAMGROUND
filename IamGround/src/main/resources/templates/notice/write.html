@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<title>Insert title here</title>
+
+<style>
+.container {
+	  width: 1000px;
+      margin: 0 auto;
+      margin-top: 40px;
+      background-color: rgba(196, 233, 255, 1);
+}
+
+</style>
+
+</head>
+<body>
+
+	<div th:replace="common/header.html"></div>
+
+	<div class="container"><!-- container area -->
+	
+	<h1 align="center">공지사항 작성</h1>
+	
+	<button style="margin-left: 820px" onclick="location.href='/notice/list'">취소</button>
+	
+	<form action="/notice/write" method="post" align="center">
+	
+		<textarea type="text"  name="noticeTitle" cols="100%" rows="1" placeholder="제목"></textarea><br>
+		<textarea  type="text" name="promemName" cols="100%" rows="1" placeholder="작성자"></textarea><br>
+		<textarea type="text" name="noticeContent" cols="100%" rows="20" placeholder="내용"></textarea><br>
+		<input type="submit" value="등록" style="margin-left: 680px">
+	</form>
+		
+	</div>	<!-- container area end-->
+	
+	<div th:replace="common/footer2.html"></div>
+	
+</body>
+</html>

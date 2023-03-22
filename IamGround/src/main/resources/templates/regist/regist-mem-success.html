@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<style>
+	#box01{
+		/* center로 위치하게 만들기 */
+		background: lightgray;
+		width: 100%;
+		height: 400px;
+	}
+</style>
+</head>
+<body>
+
+	<div th:replace="common/header.html"></div>	
+	<h1 align="center">회원 가입</h1>
+    <hr>
+    <p align="center">가입 유형 선택 → 회원 정보 입력 → <strong>가입 신청 완료</strong></p>
+<br>
+<br>
+		<div id="box01" align="center">
+			<br>
+			<h3>I AM Ground의 일반 회원이 되신 것을 환영합니다!</h3>
+			<br>
+			<br>
+			<br>
+			<p>회원가입이 성공적으로 완료되었습니다.</p>
+			<p>로그인 후 I AM Ground의 서비스를 이용하실 수 있습니다.</p>
+			<br>
+			<br>
+			<button onclick="location.href='/login/login'">로그인</button>
+		</div>
+			<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<div th:replace="common/footer.html"></div>
+</body>
+</html>

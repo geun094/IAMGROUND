@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<style>
+	#box01{
+		/* center로 위치하게 만들기 */
+		background: lightgray;
+		width: 100%;
+		height: 400px;
+	}
+</style>
+</head>
+<body>
+
+	<div th:replace="common/header.html"></div>
+	<h1 align="center">회원 가입</h1>
+    <hr>
+    <p align="center">가입 유형 선택 → 회원 정보 입력 → <strong>가입 신청 완료</strong></p>
+		<br>
+		<div id="box01" align="center">
+			<br>
+			<h3>I AM Ground의 전문가 회원이 되신 것을 환영합니다!</h3>
+			<br>
+			<br>
+			<br>
+			<p>전문가 회원 인증을 위해 관리자의 승인이 필요합니다.</p>
+			<p>관리자의 승인 전에는 게시글 작성 및 댓글 작성에 제한이 있습니다.</p>
+			<br>
+			<p>관리자의 승인은 24시간 내에 처리됩니다. </p>
+			<p>(승인 여부는 마이페이지에서 확인 가능합니다.)</p>
+			<br>
+			<button onclick="location.href='/login/login'">로그인</button>
+		</div>
+		<br>
+<br>
+<br>
+<br>
+<br>
+<div th:replace="common/footer.html"></div>
+</body>
+</html>

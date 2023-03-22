@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet"
+   href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+<script
+   src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script
+   src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+<script 
+   src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+<title>Insert title here</title>
+<style>
+
+div>button, .submit {
+   width: 200px;
+   margin-top: 10px;
+}
+
+.id-text {
+   width:120px;
+   color:rgba(35, 30, 236, 1); 
+   background: rgba(196, 233, 255, 1) !important;
+}
+
+.find-text {
+   width:120px;
+   color: white; 
+   background: black !important;
+}
+.log {
+   color: white;
+    background:rgba(73, 137, 232, 1);
+}
+
+.ip {
+   color: white;
+    background:rgba(73, 137, 232, 1);
+}
+.hg{
+   color: white;
+    background:rgba(73, 137, 232, 1);
+}
+
+.pop-layer .pop-container {
+  padding: 20px 25px;
+}
+
+.pop-layer p.ctxt {
+  color: #666;
+  line-height: 25px;
+}
+.find-name {
+text-align: left;
+background-color: #fff;
+}
+
+
+.pop-layer .btn-r {
+  width: 100%;
+  margin: 10px 0 20px;
+  padding-top: 10px;
+  border-top: 1px solid #DDD;
+  text-align: center;
+}
+
+.pop-layer {
+  display: none;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 410px;
+  height: auto;
+  background-color: #fff;
+  border: 5px solid #3571B5;
+  z-index: 10;
+}
+
+.dim-layer {
+  display: none;
+  position: fixed;
+  _position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 100;
+}
+
+.dim-layer .dimBg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #000;
+  opacity: .5;
+  filter: alpha(opacity=50);
+}
+
+.dim-layer .pop-layer {
+  display: block;
+}
+
+a.btn-layerConfirm {
+  display: inline-block;
+  height: 25px;
+  padding: 0 14px 0;
+  border: 1px solid #304a8a;
+  background-color: #3f5a9d;
+  font-size: 13px;
+  color: #fff;
+  line-height: 25px;
+}
+
+a.btn-layerConfirm:hover {
+  border: 1px solid #091940;
+  background-color: #1f326a;
+  color: #fff;
+}
+
+a.btn-layerClose {
+  display: inline-block;
+  height: 25px;
+  padding: 0 14px 0;
+  border: 1px solid #304a8a;
+  background-color: #3f5a9d;
+  font-size: 13px;
+  color: #fff;
+  line-height: 25px;
+}
+
+a.btn-layerClose:hover {
+  border: 1px solid #091940;
+  background-color: #1f326a;
+  color: #fff;
+}
+
+</style>
+</head>
+<body>
+   <br>
+   <form action="/login/login" method="post" id="loginForm">
+         <input type="hidden" id="loginInfo" name="username" value="">
+      <table align="center">
+         <tr>
+            <td>
+               <div class="input-group mb-3 input-group-lg">
+                  <div class="input-group-prepend">
+                     <span class="input-group-text id-text">아이디</span>
+                  </div>
+                  <input type="text" onkeypress="keyPress(event)" class="form-control" id="id" name="" placeholder="아이디를 입력하세요"><!-- 시큐리티에서는 반드시 username으로 name값 설정 -->
+               </div>
+            </td>
+            <td rowspan="2"></td>
+         </tr>
+         <tr>
+            <td>
+               <div class="input-group mb-3 input-group-lg">
+                  <div class="input-group-prepend">
+                     <span class="input-group-text id-text">비밀번호</span>
+                  </div>
+                  <input type="password" onkeypress="keyPress(event)" class="form-control" id="pw" name="password" placeholder="비밀번호를 입력하세요"><!-- 시큐리티에서는 반드시 password으로 name값 설정 -->
+               </div>
+                  <input type="checkbox" id="proChk"><label>전문가 회원 로그인 체크</label>
+            </td>
+
+         </tr>
+      </table>
+   <div align="center">
+      <input type="button" id="loginBtn" value="로그인" class="log submit">
+      <br>
+      <button type="button" class="btn-example ip" >아이디 / 비밀번호 찾기</button>
+      <br>
+      <button type="button" class="hg" onclick="location.href='/regist/regist'">회원가입</button>
+   </div>
+   </form>
+   
+   
+<div  class="dim-layer">
+    <div class="dimBg"></div>
+    <div id="layer2" class="pop-layer">
+        <div class="pop-container">
+            <div class="pop-conts">
+                <!--content //-->
+                <input type="radio"  name="chk_info" class="ctxt mb20">아이디 찾기<br>
+                    <p>회원 가입시 입력하신 이름/휴대폰번호로 아이디를 확인하실 수 있습니다.</p> 
+                
+                <form name="idfindscreen" method = "POST">
+         <div class = "search-title">
+         </div>
+      <section class = "form-search">
+         
+         <div class="input-group-prepend">
+                     <span class="input-group-text find-text">이름</span>
+                  
+            <input type="text" id="memberName" name="member_name" class = "btn-name" placeholder = "이름 입력">
+         <br>
+         </div>
+         
+         <div class="input-group-prepend">
+                     <span class="input-group-text find-text">휴대폰번호</span>
+                <input type="text" onKeyup = "addHypen(this);" id="memberPhone" name="member_phone" class = "btn-phone" placeholder = "휴대폰번호를 '-'없이 입력">
+         </div>
+         <br>
+                <div class="btn-r">
+                    <a href="#" class="btn-layerConfirm" id="findId">찾기</a>
+                    <a href="#" class="btn-layerClose">취소</a>
+                </div>
+      </section>
+            </form>
+            <input type="radio"  name="chk_info" class="ctxt mb20" >비밀번호 찾기<br>
+                    <p>회원 가입시 입력하신 ID/휴대폰번호로 비밀번호를 초기화 합니다.</p> 
+                <section class = "form-search">
+         
+         <div class="input-group-prepend">
+                     <span class="input-group-text find-text">ID</span>
+                  
+            <input type="text" id="pwId" name="pwId" class = "btn-name" placeholder = "아이디 입력">
+         <br>
+         </div>
+         
+         <div class="input-group-prepend">
+                     <span class="input-group-text find-text">이름</span>
+                  
+            <input type="text" id="pwName" name="pwName" class = "btn-name" placeholder = "이름 입력">
+         </div>
+         <br>
+      </section>
+              <div class="btn-r">
+                    <a href="#" class="btn-layerConfirm" id="findPwd">찾기</a>
+                    <a href="#" class="btn-layerClose">취소</a>
+                </div>
+
+                <!--// content-->
+            </div>
+        </div>
+    </div>
+</div>
+   
+   <script>
+       //로그인
+       function loginGo(){
+          var form = document.getElementById("loginForm");
+            var id = document.getElementById("id");
+            var pw = document.getElementById("pw");
+            var chk = $("#proChk").is(":checked") ? 'Y' : 'N';
+            
+            $("#loginInfo").val(id.value+","+chk);
+      			//아이디를 입력하지 않았을때 
+            if (pw.value.trim() == "" || id.value.trim() == "") {
+               alert("아이디와 비밀번호를 입력해 주세요");
+               return false;
+            }
+      
+            //form.action = "";
+            //form.mothod = "GET";
+            form.submit();
+       }
+         $(document).ready(function(){
+            let message = "[[${msg}]]";
+            
+            if (message != "") {
+                 alert(message);
+             }else {
+             }
+            
+            $("#loginBtn").click(function(){
+               loginGo();
+            });
+            
+            $("#findId").click(function(){
+               //변수 값 두개 가져오고
+               var memberName = $("#memberName").val();
+               var memberPhone = $("#memberPhone").val();
+               
+               //값을 제대로 입력했나 validation체크
+               if(memberName == '' || memberName == undefined){
+                  alert('이름을 입력하세요.');
+                  return;
+               }
+               if(memberPhone == '' || memberPhone == undefined){
+                  alert('휴대폰번호를 입력하세요.');
+                  return;
+               }
+               $.ajax({
+               url: "/common/idfind",
+               method:"POST",
+               dataType:"json",
+               contentType:"application/json;charset=utf-8",
+               data:JSON.stringify({memberName : memberName
+                              , memberPhone : memberPhone 
+                              })
+               /* 2. JS 측에서 JSON.parse로 해석하는 경우 */
+               , success: function(rtData) {
+                  console.log(rtData);
+                  console.log("ajax 통신 성공!");
+                  console.log('ajax', rtData.rCode, rtData.rMessage);
+                  
+                  alert(rtData.rMessage);
+                  if(rtData.rCode == 100){
+                     $("a.btn-layerClose").trigger("click");
+                  }
+                  
+               },
+               error: function(error) {
+                  console.log("ajax 통신 실패!");
+               }
+            });
+            });
+            
+            $("#findPwd").click(function(){
+               //변수 값 두개 가져오고
+               var pwId = $("#pwId").val();
+               var pwName = $("#pwName").val();
+               
+               //값을 제대로 입력했나 validation체크
+               if(pwId == '' || pwId == undefined){
+                  alert('아이디를 입력하세요.');
+                  return;
+               }
+               if(pwName == '' || pwName == undefined){
+                  alert('이름를 입력하세요.');
+                  return;
+               }
+               $.ajax({
+               url: "/common/pwdfind",
+               method:"POST",
+               dataType:"json",
+               contentType:"application/json;charset=UTF-8",
+               data:JSON.stringify({pwId: pwId
+                              , pwName : pwName})
+            /* 2. JS 측에서 JSON.parse로 해석하는 경우 */
+               , success: function(rtData) {
+                     console.log(rtData);
+                     console.log("ajax 통신 성공!");
+                     console.log('ajax', rtData.rCode, rtData.rMessage);
+                     
+                     alert(rtData.rMessage);
+                     if(rtData.rCode == 100){
+                        $("a.btn-layerClose").trigger("click");
+                     }
+                     
+                  },
+                  error: function(error) {
+                     console.log("ajax 통신 실패!");
+                  }
+                  });
+               });
+            
+            
+         });
+      
+        document.querySelector("input[name=username]").focus();
+         
+      const keyPress = (e) => {
+         if(e.key == 'Enter'){
+            loginGo();
+         }
+         //document.getElementById("loginForm").submit();
+      };
+      
+      $('.btn-example').click(function(){
+          //var $href = $(this).attr('href');
+          var $href = '#layer2';
+          layer_popup($href);
+      }); 
+         
+          function layer_popup(el){
+
+          var $el = $(el);    //레이어의 id를 $el 변수에 저장
+          var isDim = $el.prev().hasClass('dimBg'); //dimmed 레이어를 감지하기 위한 boolean 변수
+
+          isDim ? $('.dim-layer').fadeIn() : $el.fadeIn();
+
+          var $elWidth = ~~($el.outerWidth()),
+                 $elHeight = ~~($el.outerHeight()),
+              docWidth = $(document).width(),
+           docHeight = $(document).height();
+
+          // 화면의 중앙에 레이어를 띄운다.
+          if ($elHeight < docHeight || $elWidth < docWidth) {
+              $el.css({
+               marginTop: -$elHeight /2,
+               marginLeft: -$elWidth/2
+             })
+          } else {
+                 $el.css({top: 0, left: 0});
+             }
+
+       $el.find('a.btn-layerClose').click(function(){
+           isDim ? $('.dim-layer').fadeOut() : $el.fadeOut(); // 닫기 버튼을 클릭하면 레이어가 닫힌다.
+           //닫기시 input value값 초기화 필요
+           $("#memberName, #memberPhone").val('');
+           return false;
+       });
+
+       $('.layer .dimBg').click(function(){
+           $('.dim-layer').fadeOut();
+           return false;
+       });
+
+   }
+          
+      
+      /*
+      document.querySelector("#username").onkeypress = keyPress; 
+      document.querySelector("#password").onkeypress = keyPress;
+      */
+      </script>
+      
+</body>
+</html>

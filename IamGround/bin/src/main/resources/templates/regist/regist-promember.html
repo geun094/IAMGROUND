@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+    <title>회원가입-전문가</title>
+    
+    <!-- 뒤로가기로 회원가입 페이지 보는 것을 방지하기 위한 스크립트 -->
+	<script type = "text/javascript" >
+		setTimeout(function(){
+	    	window.history.forward();
+	    }, 0);	
+	</script>
+    
+</head>
+<body>
+
+	<div th:replace="common/header.html"></div>
+	
+    <h1 align="left">회원 가입</h1>
+    <hr>
+    <p align="center">가입 유형 선택 → <strong>회원 정보 입력</strong> → 가입 신청 완료</p>
+	<hr>
+    <div>
+        <h2>전문가회원 정보</h2>
+
+    </div>
+    <div align="center">
+    <form action="/regist/regist-promember" method="post" enctype="multipart/form-data" id="registForm">
+    
+        <label>아이디</label>
+        <input type="text" name="promemId" id="promemId" onkeypress="idKey()">
+        <button type="button" id="checkPromemId">중복확인</button>
+        <br>
+        <font size="1"><p>* 4~12자의 영문 대소문자와 숫자로만 입력</p></font>
+		<div><font id="promemIdFeedback" size="2"></font></div>
+
+        <br>
+        
+		<div class="proPwd">
+	        <label class="proPwd1" for="inputValid">비밀번호</label>
+	        <input type="password" class="inputProPwd" id="promemPwd1" name="promemPwd">
+	        <br>
+	        <font size="1"><p>* 4~12자의 영문 대소문자와 숫자로만 입력</p></font>
+	        <div class="valid-feedback"></div>
+		</div>
+
+		<div class="checkPromemPwd">
+	        <label class="proPwd2" for="inputInvalid">비밀번호 확인</label>
+	        <input type="password" class="inputProPwd is-invalid" id="promemPwd2" name="checkPromemPwd">
+	        <div><font id="proPwd_feedback" size="2"></font></div>
+		</div>
+		
+        <br>
+        <label>이름</label>
+        <input type="text" id="promemName" name="promemName">
+        <br>
+        
+       	<label>성별</label>
+	        <select id="promemGender" name="promemGender">
+		        <option value="null">선택안함</option>
+		        <option value="M">남성</option>
+		        <option value="F">여성</option>
+	        </select>
+        <br>
+        <label>전화번호</label>
+        <input type="tel" id="promemPhone" name="promemPhone">
+        <br>
+        
+        <label>이메일</label>
+        <input type="email" name="promemEmail" id="promemEmail" onkeypress="emailKey()">
+        <button type="button" id="checkPromemEmail">중복확인</button>
+		<div><font id="promemEmailFeedback" size="2"></font></div>
+        <br>
+		<label>주소</label>
+        <input type="text" id="addressPostcode" placeholder="우편번호">
+        <input type="button" onclick="findAddressPromem()" value="우편번호 찾기">
+        <br>
+        <input type="text" id="address" placeholder="주소">
+        <br>
+        <input type="text" id="detailAddress" placeholder="상세주소">
+        <input type="text" id="extraAddress" placeholder="참고항목">
+        <br>
+        <br>
+		<label>닉네임</label>
+		<input type="text" name="promemNickname" id="promemNickname" "nicknameKey()">
+		<button type="button" id="checkPromemNickname">중복확인</button>
+		<div><font id="promemNicknameFeedback" size="2"></font></div>
+        <br>
+        
+ 		<label>프로필 사진</label>
+		<input type="file" id="profileFile" name="profileFile" accept=".png, .jpg, .jpeg">
+
+		<br>
+		
+		<label>면허증</label>
+		<input type="file" id="licenseFile" name="licenseFile" accept=".png, .jpg, .jpeg" >
+		<br>
+		
+		<label>사업자 등록증</label>
+		<input type="file" id="businessRegFile" name="businessRegFile" accept=".png, .jpg, .jpeg" >
+		<br>
+		<br>
+		<label>사업자 등록번호</label>
+        <input type="text" id="businessRegNum" name="businessRegNum">
+       	<br>
+        <font size="1"><p>* 10자의 숫자 입력</p></font>
+		<br>
+		
+		<label>업체명</label>
+        <input type="text" id="companyName" name="companyName">
+        <br>
+    	
+    	<label>업체 사진</label>
+		<input type="file" id="companyFile" name="companyFile" accept=".png, .jpg, .jpeg" >
+		<br>
+		
+		<label>업체 주소</label>
+        <input type="text" id="comAddressPostcode" placeholder="우편번호">
+        <input type="button" onclick="findAddressCom()" value="우편번호 찾기">
+        <br>
+        <input type="text" id="comAddress" placeholder="주소">
+        <br>
+        <input type="text" id="comDetailAddress" placeholder="상세주소">
+        <input type="text" id="comExtraAddress" placeholder="참고항목">
+        <br>
+         
+		<br>
+		<label>업체 전화번호</label>
+        <input type="tel" id="companyPhone" name="companyPhone">
+        <br>
+		<label>업체 운영시간</label>
+        <input type="text" id="companyTime" name="companyTime">
+        <br>
+        <br>
+        <br>
+        <br>
+		
+		<input type="hidden" name="authorityRequest" id="authorityRequest" value="Y">
+		<input type="hidden" name="promemAddress" id="promemAddress">
+		<input type="hidden" name="companyAddress" id="companyAddress">
+		<input type="hidden" name="companyAddressLatitude" id="companyAddressLatitude">
+		<input type="hidden" name="companyAddressLongitude" id="companyAddressLongitude">
+		<input type="hidden" name="addressCheckYn" id="addressCheckYn" value="N">
+		
+		<input type="hidden" name="idCheckYn" id="idCheckYn" value="N">
+		<input type="hidden" name="emailCheckYn" id="emailCheckYn" value="N">
+		<input type="hidden" name="nicknameCheckYn" id="nicknameCheckYn" value="N">
+		<!-- addressCheckYn이 N이면 submit 제한 -->
+		
+		<button type="button" name="registBtn" id="registBtn" onclick="checkForm()">가입신청</button>
+		
+    </form>
+	</div>
+	<br>
+	<br>
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+	<script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=03e86f847fb28d77b92bb9ed6517fb1c&libraries=services"></script>
+	<script type="text/javascript">
+
+ 	/* 아이디 중복확인 */   
+ 	$("#checkPromemId").click(function() {
+ 		var checkId = document.getElementById("promemId").value;
+ 		console.log(checkId)
+ 		var promemberDTO = {
+ 			"promemId":checkId
+ 		};
+ 		
+ 		$.ajax({
+ 			type:"post",
+ 			url:"/regist/checkPromemId",
+ 			data: JSON.stringify(promemberDTO),
+ 			dataType: "json",
+ 			contentType: "application/json;charset=UTF-8",
+ 			success: function(promemIdcheckResult) {
+ 				if(promemIdcheckResult == 1) {
+ 					$("#promemIdFeedback").html('이미 사용중인 아이디입니다.');
+ 					$("#promemIdFeedback").attr('color', '#ff0000');
+ 				} else {
+ 					$("#promemIdFeedback").html('사용 가능한 아이디입니다.');
+ 					$("#promemIdFeedback").attr('color', 'green');
+ 					$("#idCheckYn").val("Y");
+ 				}
+ 			},
+ 			error: function() {
+ 				alert("서버 요청 실패");
+ 			}
+ 		});
+ 	});
+ 	
+
+ 	/* 이메일 중복확인 */   
+ 	$("#checkPromemEmail").click(function() {
+ 		var checkEmail = document.getElementById("promemEmail").value;
+ 		console.log(checkEmail)
+ 		var promemberDTO = {
+ 			"promemEmail":checkEmail
+ 		};
+ 		
+ 		$.ajax({
+ 			type:"post",
+ 			url:"/regist/checkPromemEmail",
+ 			data: JSON.stringify(promemberDTO),
+ 			dataType: "json",
+ 			contentType: "application/json;charset=UTF-8",
+ 			success: function(promemEmailCheckResult) {
+ 				if(promemEmailCheckResult == 1) {
+ 					$("#promemEmailFeedback").html('이미 사용중인 이메일입니다.');
+ 					$("#promemEmailFeedback").attr('color', '#ff0000');
+ 				} else {
+ 					$("#promemEmailFeedback").html('사용 가능한 이메일입니다.');
+ 					$("#promemEmailFeedback").attr('color', 'green');
+ 					$("#emailCheckYn").val("Y");
+ 				}
+ 			},
+ 			error: function() {
+ 				alert("서버 요청 실패");
+ 			}
+ 		});
+ 	});
+ 	
+ 	/* 닉네임 중복확인 */   
+ 	$("#checkPromemNickname").click(function() {
+ 		var checkNickname = document.getElementById("promemNickname").value;
+ 		console.log(checkNickname)
+ 		var promemberDTO = {
+ 			"promemNickname":checkNickname
+ 		};
+ 		
+ 		$.ajax({
+ 			type:"post",
+ 			url:"/regist/checkPromemNickname",
+ 			data: JSON.stringify(promemberDTO),
+ 			dataType: "json",
+ 			contentType: "application/json;charset=UTF-8",
+ 			success: function(promemNicknameCheckResult) {
+ 				if(promemNicknameCheckResult == 1) {
+ 					$("#promemNicknameFeedback").html('이미 사용중인 닉네임입니다.');
+ 					$("#promemNicknameFeedback").attr('color', '#ff0000');
+ 				} else {
+ 					$("#promemNicknameFeedback").html('사용 가능한 닉네임입니다.');
+ 					$("#promemNicknameFeedback").attr('color', 'green');
+ 					$("#nicknameCheckYn").val("Y");
+ 				}
+ 			},
+ 			error: function() {
+ 				alert("서버 요청 실패");
+ 			}
+ 		});
+ 	});
+ 	
+	
+	/* 비밀번호 확인 */
+   	$("#promemPwd2").keyup(function() {
+
+   		let pass1 = document.getElementById("promemPwd1").value;
+   		let pass2 = document.getElementById("promemPwd2").value;
+   		
+   		if (pass1 != "" || pass2 != "") {
+   			if(pass1 == pass2) {
+   				$("#proPwd_feedback").html('비밀번호가 일치합니다.');
+   				$("#proPwd_feedback").attr('color', 'green');
+   				$("#promemPwd2").addClass("is-valid");
+   				$("#promemPwd2").removeClass("is-invalid");
+   			} else {
+   				$("#proPwd_feedback").html('비밀번호가 일치하지 않습니다.');
+   				$("#proPwd_feedback").attr('color', '#ff0000');
+   				$("#promemPwd2").removeClass("is-valid");
+   				$("#promemPwd2").addClass("is-invalid");
+   			}
+   		}
+   	})
+    	
+        
+
+ /* 주소 검색 */
+    function findAddressPromem(){
+        new daum.Postcode({
+            oncomplete: function(data) {
+                var addr = '';    
+                var extraAddr = '';   
+
+                if (data.userSelectedType === 'R') {
+                    addr = data.roadAddress;
+                } else {
+                    addr = data.jibunAddress;
+                }
+
+                if(data.userSelectedType === 'R') {
+                    if(data.bname !== '' && /[동|로|가]$/g.test(data.bname)){
+                        extraAddr += data.bname;
+                    }
+
+                    if(data.buildingName !== '' && data.apartment === 'Y') {
+                        extraAddr += (extraAddr !== '' ? ',' + data.buildingName : data.buildingName);
+                    }
+
+                    if(extraAddr !== ''){
+                        extraAddr = ' (' + extraAddr + ')';
+
+                    document.getElementById("extraAddress").value = extraAddr;
+                    } else {
+                    document.getElementById("extraAddress").value = '';
+                    }
+
+                document.getElementById("addressPostcode").value = data.zonecode;
+                document.getElementById("address").value = addr;
+                document.getElementById("detailAddress").focus();
+                }
+            }
+        	
+        }).open();
+    }
+ 	
+ 	/* 주소값 합치기 */
+ 	function addProAddress() {
+ 		var address = document.getElementById("address").value;
+ 		var detailAddress = document.getElementById("detailAddress").value;
+ 		document.getElementById("promemAddress").value = address + " " + detailAddress;
+ 	}
+ 	
+ 	/* 업체 주소 검색 */  
+    function findAddressCom(){
+        new daum.Postcode({
+            oncomplete: function(data) {
+                comAddr = '';    
+                var comExtraAddr = '';   
+
+                if (data.userSelectedType === 'R') {
+                	comAddr = data.roadAddress;
+                } else {
+                	comAddr = data.jibunAddress;
+                }
+
+                if(data.userSelectedType === 'R') {
+                    if(data.bname !== '' && /[동|로|가]$/g.test(data.bname)){
+                    	comExtraAddr += data.bname;
+                    }
+
+                    if(data.buildingName !== '' && data.apartment === 'Y') {
+                    	comExtraAddr += (comExtraAddr !== '' ? ',' + data.buildingName : data.buildingName);
+                    }
+
+                    if(comExtraAddr !== ''){
+                    	comExtraAddr = ' (' + comExtraAddr + ')';
+
+                    document.getElementById("comExtraAddress").value = comExtraAddr;
+                    } else {
+                    document.getElementById("comExtraAddress").value = '';
+                    }
+
+                document.getElementById("comAddressPostcode").value = data.zonecode;
+                document.getElementById("comAddress").value = comAddr;
+                document.getElementById("comDetailAddress").focus();
+                
+                addressSearch(comAddr);
+                
+                }
+              
+            }
+        	
+        }).open();
+    }
+ 	
+	/* 업체 주소 경도 위도 저장 */
+ 	function addressSearch(comAddr) {
+		/* console.log("addressSearch Call!!"); */
+		var geocoder = new kakao.maps.services.Geocoder();
+		// 주소로 좌표를 검색합니다
+		geocoder.addressSearch(comAddr, function(result, status) {
+		
+			// 정상적으로 검색이 완료됐으면 
+			if (status === kakao.maps.services.Status.OK) {
+				
+				var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+				
+				var lat = result[0].y;
+	
+				var lng = result[0].x;
+		          
+				document.getElementById("companyAddressLatitude").value = lat;
+				document.getElementById("companyAddressLongitude").value = lng;
+				
+				/* alert($("#addressCheckYn").val()); */
+				$("#addressCheckYn").val("Y");
+			} 
+		});
+	}
+     
+ 	
+	/* 업체 주소값 합치기 */
+ 	function addComAddress() {
+ 		var address = document.getElementById("comAddress").value;
+ 		var detailAddress = document.getElementById("comDetailAddress").value;
+ 		document.getElementById("companyAddress").value = address + " " + detailAddress;
+ 	}
+	
+	/* 업체 주소 경도 위도 동기화 작업 확인 */
+	function addressCheck () {
+
+		if ($("#addressCheckYn").val() == "N") {
+			alert("주소 동기화 작업 진행 중입니다. 잠시후 다시 시도해주세요.");
+			return false;
+		}
+		
+		return true;
+	}
+	
+	/* 유효성 검사 */
+ 	function checkForm () {
+ 		
+		addProAddress();
+		addComAddress();
+ 		
+ 		var id = document.getElementById("promemId");
+ 		var pwd = document.getElementById("promemPwd1");
+ 		var pwdCheck = document.getElementById("promemPwd2");
+ 		var name = document.getElementById("promemName");
+ 		var address = document.getElementById("promemAddress");
+ 		var phone = document.getElementById("promemPhone");
+ 		var email = document.getElementById("promemEmail");
+ 		var nickname = document.getElementById("promemNickname");
+ 		
+ 		var profileFile = document.getElementById("profileFile");
+ 		var licenseFile = document.getElementById("licenseFile");
+ 		var businessRegFile = document.getElementById("businessRegFile");
+ 		var businessRegNum = document.getElementById("businessRegNum");
+ 		var companyName = document.getElementById("companyName");
+ 		var companyFile = document.getElementById("companyFile");
+ 		var companyAddress = document.getElementById("companyAddress");
+ 		var companyPhone = document.getElementById("companyPhone");
+ 		var companyTime = document.getElementById("companyTime");
+ 		
+ 		let flag = true;
+ 		
+ 		if(id.value == '') {
+ 			alert("아이디를 입력하세요.");
+ 			flag = false;
+ 		}
+ 		
+ 		var idRegExp =  /^[a-zA-z0-9]{4,12}$/; 
+ 		if(!idRegExp.test(id.value)) {
+ 			alert("아이디는 영문 대소문자와 숫자 4~12자리로 입력해주세요.")
+ 		}
+ 		
+ 		if(pwd.value == '') {
+ 			alert("비밀번호를 입력하세요.");
+ 			flag = false;
+ 		}
+ 		
+ 		var pwdRegExp =  /^[a-zA-z0-9]{4,12}$/; 
+ 		if(!pwdRegExp.test(pwd.value)) {
+ 			alert("비밀번호는 영문 대소문자와 숫자 4~12자리로 입력해주세요.")
+ 		}
+ 		
+ 		if(pwdCheck.value == '') {
+ 			alert("비밀번호를 확인해주세요.");
+ 			flag = false;
+ 		}
+ 		
+ 		if(name.value == '') {
+ 			alert("이름을 입력하세요.");
+ 			flag = false;
+ 		}
+ 	
+ 		if(address.value == '') {
+ 			alert("주소를 입력하세요.");
+ 			flag = false;
+ 		}
+ 		
+ 		/* if(phone.value == '') {
+ 			alert("전화번호를 입력하세요.");
+ 			flag = false;
+ 		} */
+ 		
+ 		if(email.value == '') {
+ 			alert("이메일을 입력하세요.");
+ 			flag = false;
+ 		}
+ 		
+ 		if(nickname.value == '') {
+ 			alert("닉네임을 입력하세요.");
+ 			flag = false;
+ 		}
+ 		
+ 		if(profileFile.value == '') {
+ 			alert("프로필 사진을 첨부하세요.");
+ 			flag = false;
+ 		}
+ 		
+ 		if(licenseFile.value == '') {
+ 			alert("면허증 사진을 첨부하세요.");
+ 			flag = false;
+ 		}
+ 		
+ 		if(businessRegFile.value == '') {
+ 			alert("사업자 등록증 사진을 첨부하세요.");
+ 			flag = false;
+ 		}
+ 		
+ 		if(businessRegNum.value == '') {
+ 			alert("사업자 등록번호를 입력하세요.");
+ 			flag = false;
+ 		}
+ 		
+ 		var brnRegExp =  /^[0-9]{0,10}$/; 
+ 		if(!brnRegExp.test(businessRegNum.value)) {
+ 			alert("사업자 등록번호는 숫자만 입력해주세요.")
+ 		} 
+ 		
+ 		if(companyName.value == '') {
+ 			alert("업체 이름을 입력하세요.");
+ 			flag = false;
+ 		}
+ 		
+ 		if(companyFile.value == '') {
+ 			alert("업체 사진을 첨부하세요.");
+ 			flag = false;
+ 		}
+ 		
+ 		if(companyAddress.value == '') {
+ 			alert("업체 주소를 입력하세요.");
+ 			flag = false;
+ 		}
+ 		
+ 		if(companyPhone.value == '') {
+ 			alert("업체 전화번호를 입력하세요.");
+ 			flag = false;
+ 		}
+ 		
+ 		if(companyTime.value == '') {
+ 			alert("업체 운영시간을 입력하세요.");
+ 			flag = false;
+ 		}
+
+ 		if ($("#idCheckYn").val() == "N") {
+			alert("아이디를 중복 확인해주세요.");
+			flag = false;
+		}
+ 		
+ 		if ($("#emailCheckYn").val() == "N") {
+			alert("이메일을 중복 확인해주세요.");
+			flag = false;
+		}
+ 		
+ 		if ($("#nicknameCheckYn").val() == "N") {
+			alert("닉네임을 중복 확인해주세요.");
+			flag = false;
+		}
+ 		
+ 		if(addressCheck() != true) {
+ 			flag = false;
+ 		}
+ 		
+ 		if(flag)
+ 		document.querySelector("#registForm").submit();
+ 	}
+ 	
+ 	function idKey() {
+ 		$("#idCheckYn").val("N");
+ 	}
+ 	
+ 	function emailKey() {
+ 		$("#emailCheckYn").val("N");
+ 	}
+ 	
+ 	function nicknameKey() {
+ 		$("#nicknameCheckYn").val("N");
+ 	}
+	
+
+    </script>
+<div th:replace="common/footer.html"></div>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html "http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<style>
+.container {
+	  width: 900px;
+      margin: 0 auto;
+      margin-top: 40px;
+      background-color: rgba(196, 233, 255, 1);
+}
+</style>
+</head>
+<body>
+
+	<div th:replace="common/header.html"></div>
+
+
+	<div class="container"><!-- container area -->
+	
+	<h1 align="center">공지내용</h1>
+	
+	<button onclick="location.href='/notice/list'" style="margin-left: 745px">목록으로</button>
+	
+	<div align="center">
+	<form th:action="@{'/notice/modify/'}" method="post">
+		 <input type="hidden" th:value="${notice.noticeNo}" name="noticeNo">
+		<textarea th:text="${ notice.noticeTitle }" name="noticeTitle" cols="100%" rows="1"></textarea><br>
+		<textarea th:text="${ notice.promemName }" name="promemName" cols="100%" rows="1"></textarea><br>
+	 	<textarea th:text="${ notice.noticeContent }" name="noticeContent" cols="100%" rows="20"></textarea><br>
+		
+		<input type="submit" style="margin-left: 680px" value="수정">
+	</form>
+	
+	<form th:action="@{'/notice/delete/'}" method="post" style="margin-left: 680px">
+		<input type="hidden" th:value="${notice.noticeNo}" name="noticeNo">
+		<input type="submit" value="삭제">
+	</form>
+	</div> 
+	</div>
+		
+	<div th:replace="common/footer2.html"></div>	
+		
+	<script>
+		const successMessage = "[[${ modifySuccessMessage }]]";
+		successMessage && alert(successMessage);
+	</script>
+		
+		
+			
+	
+</body>
+</html>

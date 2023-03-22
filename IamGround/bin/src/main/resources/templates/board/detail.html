@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+<link th:href="@{/css/board/detailcss.css}" type="text/css" rel="stylesheet" />
+</head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<body>
+    
+   <script>
+      const successMessage = "[[${ modifySuccessMessage }]]";
+      successMessage && alert(successMessage);
+   </script>
+   <div th:include="common/header.html"></div>
+   <br><div align="right"><button class="btn" onclick="location.href='/board/list'">돌아가기</button></div>
+   <form id='board_frm' class="TC">
+      <input type="hidden" th:value="${board.boardNo}" name="boardNo" id="b_no" >
+      <hr width= "800px">
+      <input class="T" th:value="${board.boardTitle}" name='boardTitle' readonly><!-- name을 DTO랑 동일하게 지으면 알아서 DTO로 들어간다 -->
+      <hr width= "800px">
+      <textarea class="C" th:text="${board.boardContent}" name='boardContent' readonly cols="111" rows="30" ></textarea>
+      <hr width= "800px">
+   </form>
+   
+<div align="right"><button class="btn" id='modify'>글 수정하기</button></div>
+
+
+<!-- RESTful API 작성을 위해 hiddenHttpMethodFilter를 이용, form태그의 method는 post이지만, 컨트롤러에서 delete로 매핑된다-->
+<!-- REST : Representational State Transfer의 약자이며, 자원을 이름으로 구분하여 해당 자원의 상태(정보)를 주고 받는 모든 것을 의미한다. -->
+<!-- align="right" sec:authorize="hasRole('ADMIN')" -->
+
+	<div align="right"><br>
+		<form th:action="@{'/board/' + ${boardNo}}" method="post">
+			<input type="hidden" name="_method" value="delete"/>
+			<button class="btn" id="delete">삭제</button>
+		</form>
+	</div>
+<script>
+/* 서밋 버튼을 폼태그 밖으로 빼놔서 이렇게 작성, 버튼이 하나일 경우엔 이 방식을 사용하지 않아도 지장X, 버튼이 폼태그 안에 있어도
+   액션으로 경로를 이동하면 됨. 버튼2개가 각자 다른 경로로 이동한다면 이 방식을 사용해도 됨, 버튼타입에 아이디만 주고 스크립트로 컨트롤해도 괜찮음 */
+$(function(){
+   $('#modify').click(function(){
+      board_frm.action = "/board/modify";
+      board_frm.method ='get';
+      board_frm.submit();
+   });
+   
+});
+</script>
+
+<script>
+$(function(){
+	$("#delete").click(function(){
+		if(!confirm("삭제하시면 복구할수 없습니다. \n 정말로 삭제하시겠습니까?")){
+			return false;
+		}
+	});
+});
+</script>
+
+<!-- 댓글 기능 -->
+<br/>		
+
+<form>
+<hr width= "800px">
+	<div class="cmt">
+	
+    	<input type="hidden" id="boardNo" th:value="${board.boardNo}">
+    	<textarea class="ma" id="comment-content" cols="130" rows="5"style="margin-right: 517px;" placeholder="댓글을 입력하세요"></textarea>
+    	<input type="hidden" name="createdDate">
+    </div>
+	<br><div class="bt"><button class="btn" type="button" id="comment_save" >등록하기</button></div><br><br><br>
+</form>
+<div class="cmt2">
+	<div th:each="comment : ${board.commentList}">
+	<hr width= "800px">
+    	<div th:text="${comment.promemNo}" name="promemNo"></div>
+    	<div style="width:800px; word-break:break-all;word-wrap:break-word;" th:text="${comment.commentContent}" name="commentContent"></div>
+    	<div th:text="${ comment.createdDate }" name="createdDate"></div>
+    <hr width= "800px">	
+    </div>
+</div>
+<br><div align="right"><button class="btn" onclick="location.href='/board/list'">돌아가기</button></div><br><br>
+<script>
+let commentIndex = {
+	      init: function () {
+	         $("#comment_save").on("click", () => {
+	            this.commentSave(); // ()있으면 메소드, id comment_save 버튼을 onClick하면 아래 정의한 함수 호출  
+	         });
+	      },
+  
+	      commentSave: function (){ //아래 data는 변수명, {}로 묶어서 객체화, 담긴값 여러개 가능 
+	         let data = {
+	        		 commentContent: $("#comment-content").val(), // commentConent는 넘겨지는 키값, DTO 필드에 생성한 이름과 같아야함, 변수명임  
+	        		 boardNo : $("#boardNo").val()
+	         }
+	         console.log(data);
+	         $.ajax({
+	            type : "POST",     // form의 method             // `` = 템플릿 문자열, 자바의 "문자열만들기" 처럼 `백쿼트로 문자열을 감싸면 ${}형태로 변수를 문자열로 삽입이 가능하다
+	            url: '/board/[[${boardNo}]]/comment', // form action // 에이작스는 자신이 호출 한 곳으로 돌아온다, 그래서 /comment가 없이 글상세페이지와 url이 동일하게 설정해버리면 글상세페이지인지 댓글쓰기페이지인지 구분을 못한다.
+	            data: data, // 무슨 데이터를 컨트롤러한테 넘겨줄건지 // 자바스크립트 객체를 JSON 문자열로 변환할땐 stringify 메서드를 사용
+	            success: function(result) { // 갔다가 성공하고 돌아오면 뭘 해줄건지    data = 가서 들은 대답
+	            	/* location.href = `/board/${boardNo}`; */
+	            	location.reload();
+	            	/* $('#commentTable').replaceWith(result); */
+	            	
+	            }, 
+	            error: function(error) { // 갔는데 에러발생해도 다시 돌아오면 뭘 해줄건지
+	            	
+	            }
+	         });
+	      },
+	   }
+	   commentIndex.init();
+</script>
+          <div class="footer">
+              <p>Copyright (C) 2022 IAMGROUND. All rights reserved.</p>
+          </div>
+</body>
+</html>

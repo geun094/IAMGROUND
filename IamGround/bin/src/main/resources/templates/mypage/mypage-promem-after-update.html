@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+<meta charset="UTF-8">
+<title>전문가 회원 - 마이페이지(승인 후) 수정</title>
+</head>
+<body>
+
+	<div th:replace="common/header.html"></div>
+	
+	<h1 align="center">마이 페이지 수정</h1>
+	<div align="center">
+	<form action="/mypage/mypage-promem-after-update" method="post" enctype="multipart/form-data">
+		<table>
+			<tr>
+				<td>프로필 사진</td>
+				<td>
+					<input type="file" id="profileFile" name="profileFile" accept=".png, .jpg, .jpeg">
+					<img th:src="@{'/mypage/profileImg?imgName=' + ${promemInfo.mypageProfile.profileFileRename}}" width="100px" height="100px"/>
+				</td>
+			</tr>
+			<tr>
+				<th>이름</th>
+				<td><input type="text" th:value="${promemInfo.promemName}" id="promemName"></td>
+			</tr>
+			
+			<tr>
+				<th>닉네임</th>
+				<td>
+					<input type="text" th:value="${promemInfo.promemNickname}" id="promemNickname">
+					<font id="promemNicknameFeedback" size="2"></font>
+			        <button type="button" id="checkPromemNickname">중복확인</button>					
+				</td>
+				
+			</tr>
+			<tr>
+				<th>전화번호</th>
+				<td><input type="text" th:value="${promemInfo.promemPhone}" id="promemPhone"></td>
+			</tr>
+			<tr>
+				<th>이메일</th>
+				<td>
+					<input type="email" th:value="${promemInfo.promemEmail}" id="promemEmail">
+					<font id="promemEmailFeedback" size="2"></font>
+					<button type="button" id="checkPromemEmail">중복확인</button>
+				</td>
+			</tr>
+			<tr>
+				<th>주소</th>
+				<td><input type="text" th:value="${promemInfo.promemAddress}" id="promemeAddress"></td>
+			</tr>
+	
+			<tr>
+				<td>업체 사진</td>
+				<td>
+					<input type="file" id="companyFile" name="companyFile" accept=".png, .jpg, .jpeg">
+					<img th:src="@{'/mypage/companyImg?imgName=' + ${promemInfo.mypageProfile.companyFileRename}}" width="100px" height="100px"/>
+				</td>
+			</tr>
+			<tr>
+				<th>업체명</th>
+				<td><input type="text" th:value="${promemInfo.companyName}" id="companyName"></td>
+			</tr>
+			<tr>
+				<th>업체 주소</th>
+				<td><input type="text" th:value="${promemInfo.companyAddress}" id="companyAddress"></td>
+			</tr>
+			<tr>
+				<th>업체 전화번호</th>
+				<td><input type="text" th:value="${promemInfo.companyPhone}" id="companyPhone"></td>
+			</tr>
+			<tr>
+				<th>업체 운영 시간</th>
+				<td><input type="text" th:value="${promemInfo.companyTime}" id="companyTime"></td>
+			</tr>
+		</table>
+		
+		<button type="submit" name="promemAfterUpdateBtn" id="promemAfterUpdateBtn">회원정보 수정</button>
+	</form>
+	</div>
+	<script>
+	
+	/* 이메일 중복확인 */   
+ 	$("#checkPromemEmail").click(function() {
+ 		var checkEmail = document.getElementById("promemEmail").value;
+ 		console.log(checkEmail)
+ 		var promemberDTO = {
+ 			"promemEmail":checkEmail
+ 		};
+ 		
+ 		$.ajax({
+ 			type:"post",
+ 			url:"/regist/checkPromemEmail",
+ 			data: JSON.stringify(promemberDTO),
+ 			dataType: "json",
+ 			contentType: "application/json;charset=UTF-8",
+ 			success: function(promemEmailCheckResult) {
+ 				if(promemEmailCheckResult == 1) {
+ 					$("#promemEmailFeedback").html('이미 사용중인 이메일입니다.');
+ 					$("#promemEmailFeedback").attr('color', '#ff0000');
+ 				} else {
+ 					$("#promemEmailFeedback").html('사용 가능한 이메일입니다.');
+ 					$("#promemEmailFeedback").attr('color', '#000000');
+ 				}
+ 			},
+ 			error: function() {
+ 				alert("서버 요청 실패");
+ 			}
+ 		});
+ 	});
+ 	
+ 	/* 닉네임 중복확인 */   
+ 	$("#checkPromemNickname").click(function() {
+ 		var checkNickname = document.getElementById("promemNickname").value;
+ 		console.log(checkNickname)
+ 		var promemberDTO = {
+ 			"promemNickname":checkNickname
+ 		};
+ 		
+ 		$.ajax({
+ 			type:"post",
+ 			url:"/regist/checkPromemNickname",
+ 			data: JSON.stringify(promemberDTO),
+ 			dataType: "json",
+ 			contentType: "application/json;charset=UTF-8",
+ 			success: function(promemNicknameCheckResult) {
+ 				if(promemNicknameCheckResult == 1) {
+ 					$("#promemNicknameFeedback").html('이미 사용중인 닉네임입니다.');
+ 					$("#promemNicknameFeedback").attr('color', '#ff0000');
+ 				} else {
+ 					$("#promemNicknameFeedback").html('사용 가능한 닉네임입니다.');
+ 					$("#promemNicknameFeedback").attr('color', '#000000');
+ 				}
+ 			},
+ 			error: function() {
+ 				alert("서버 요청 실패");
+ 			}
+ 		});
+ 	});
+ 	
+ 	
+	</script>
+	
+	<div th:replace="common/footer.html"></div>
+</body>
+</html>

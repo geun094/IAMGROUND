@@ -1,0 +1,10 @@
+diff a/IamGround/src/main/java/com/iamground/iam/entity/Promember.java b/IamGround/src/main/java/com/iamground/iam/entity/Promember.java	(rejected hunks)
+@@ -49,7 +49,7 @@
+ 	@Column(name="PROMEM_REG_DATETIME")
+ 	private java.sql.Date promemRegDatetime;
+ 	@Column(name="PROMEM_INACTIVE_YN")
+-	private String promeminactiveYn; 
++	private String promemInactiveYn; 
+ 	@Column(name="PROMEM_SECESSION_YN")
+ 	private String promemSecessionYn; 
+ 	@Column(name="PROMEM_SECESSION_DATETIME")

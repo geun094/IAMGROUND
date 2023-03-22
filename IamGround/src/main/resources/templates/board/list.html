@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+      
+
+<head>
+<meta charset="UTF-8">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<title>Insert title here</title>
+<link th:href="@{/css/board/listcss.css}" type="text/css" rel="stylesheet" />
+</head>
+<body>
+	<script>
+		const successMessage = "[[${ registSuccessMessage }]]";
+		successMessage && alert(successMessage);;
+	</script>
+	
+	<div th:replace="common/header.html"></div><br><br>
+	<div align="right"><button class="btn" onclick="location.href='/board/regist'">글쓰기</button></div>
+		<br>
+	<div class="back">
+		<div class="div">
+			<div th:each="board : ${ boardList }">
+				<hr width= "800px">
+				<div style='overflow:hidden;white-space:nowrap;text-overflow:ellipsis' class="item1" ><a class="item1" th:href="'/board/'+${ board.boardNo }" th:text="${ board.boardTitle }"></a></div>
+				<div style='overflow:hidden;white-space:nowrap;text-overflow:ellipsis' class="item2" ><a class="item2" th:href="'/board/'+${ board.boardNo }" th:text="${ board.boardContent }"></a></div>
+				<div>
+					<span class="item3" th:text="${ board.memNo }"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					<span class="item4" th:text="${ board.createdDate }" ></span>&nbsp;&nbsp;&nbsp;&nbsp;
+					<span class="item4"><span class="item4">최종수정일&nbsp;</span></span><span class="item4">(&nbsp;</span><span class="item4" th:text="${ board.modifiedDate }" ></span><span class="item4">&nbsp;)</span>
+				<hr width= "800px">
+				</div>
+			</div>
+		</div>
+	</div>
+  	 	<div th:replace="board/paging.html"></div>
+
+	<!-- 검색 폼 -->
+	<div align="center">
+		<form class="search" id="loginForm" action="/board/search" method="get" >
+				<select th:with="searchCondition = ${selectCriteria?.searchCondition}" id="searchCondition" class="searchCondition" name="searchCondition">
+					<option value="boardTitle" th:selected="${ searchCondition } == 'boardTitle'">제목</option>
+				</select> 
+			<input type="hidden" name="currentPage" value="1">
+			&nbsp;<input type="search" class="searchCondition2" id="name" name="searchValue" th:value="${selectCriteria?.searchValue}">
+			&nbsp;<button class="btn" type="submit">검색하기</button>
+		</form>
+		
+	</div>
+	<br><br>
+	<div th:replace="common/footer.html"></div>
+</body>
+
+
+</html>

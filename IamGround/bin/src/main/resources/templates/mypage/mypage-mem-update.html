@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+<meta charset="UTF-8">
+<title>일반회원 - 마이페이지 수정</title>
+</head>
+<body>
+
+	<div th:replace="common/header.html"></div>
+	
+	<h1 align="center">마이 페이지 수정</h1>
+	<div align="center">
+	<form action="/mypage/mypage-mem-update" method="post" align="center">
+		<table>
+			<tr>
+				<th>이름</th>
+				<td>
+				<input type="text" th:value="${memInfo.memName}" id="memName">
+				</td>
+			</tr>
+			
+			<tr>
+				<th>닉네임</th>
+				<td>
+					<input type="text" th:value="${memInfo.memNickname}" id="memNickname">
+					<font id="memNicknameFeedback" size="2"></font>
+			        <button type="button" id="checkMemNickname">중복확인</button>				
+				</td>
+			</tr>
+			
+			<tr>
+				<th>전화번호</th>
+				<td><input type="text" th:value="${memInfo.memPhone}" id="memPhone"></td>
+			</tr>
+			
+			<tr>
+				<th>이메일</th>
+				<td>
+					<input type="email" th:value="${memInfo.memEmail}" id="memEmail">
+					<font id="memEmailFeedback" size="2"></font>
+					<button type="button" id="checkMemEmail">중복확인</button>
+				</td>
+			</tr>
+			<tr>
+				<th>주소</th>
+				<td>
+				<input type="text" th:value="${memInfo.memAddress}" id="memAddress">
+				</td>
+			</tr>
+			
+		</table>
+		
+		<button type="submit" name="memUpdateBtn" id="memUpdateBtn">수정 완료</button>	
+	</form>
+	</div>
+	
+	<script>
+	/* 이메일 중복확인 */   
+ 	$("#checkMemEmail").click(function() {
+ 		var checkEmail = document.getElementById("memEmail").value;
+ 		console.log(checkEmail)
+ 		var memberDTO = {
+ 			"memEmail":checkEmail
+ 		};
+ 		
+ 		$.ajax({
+ 			type:"post",
+ 			url:"/regist/checkMemEmail",
+ 			data: JSON.stringify(memberDTO),
+ 			dataType: "json",
+ 			contentType: "application/json;charset=UTF-8",
+ 			success: function(memEmailCheckResult) {
+ 				if(memEmailCheckResult == 1) {
+ 					$("#memEmailFeedback").html('이미 사용중인 이메일입니다.');
+ 					$("#memEmailFeedback").attr('color', '#ff0000');
+ 				} else {
+ 					$("#memEmailFeedback").html('사용 가능한 이메일입니다.');
+ 					$("#memEmailFeedback").attr('color', '#000000');
+ 				}
+ 			},
+ 			error: function() {
+ 				alert("서버 요청 실패");
+ 			}
+ 		});
+ 	});
+ 	
+ 	/* 닉네임 중복확인 */   
+ 	$("#checkMemNickname").click(function() {
+ 		var checkNickname = document.getElementById("memNickname").value;
+ 		console.log(checkNickname)
+ 		var memberDTO = {
+ 			"memNickname":checkNickname
+ 		};
+ 		
+ 		$.ajax({
+ 			type:"post",
+ 			url:"/regist/checkMemNickname",
+ 			data: JSON.stringify(memberDTO),
+ 			dataType: "json",
+ 			contentType: "application/json;charset=UTF-8",
+ 			success: function(memNicknameCheckResult) {
+ 				if(memNicknameCheckResult == 1) {
+ 					$("#memNicknameFeedback").html('이미 사용중인 닉네임입니다.');
+ 					$("#memNicknameFeedback").attr('color', '#ff0000');
+ 				} else {
+ 					$("#memNicknameFeedback").html('사용 가능한 닉네임입니다.');
+ 					$("#memNicknameFeedback").attr('color', '#000000');
+ 				}
+ 			},
+ 			error: function() {
+ 				alert("서버 요청 실패");
+ 			}
+ 		});
+ 	});
+	</script>
+	
+	<div th:replace="common/footer.html"></div>
+</body>
+</html>

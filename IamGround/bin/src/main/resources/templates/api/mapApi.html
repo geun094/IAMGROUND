@@ -1,0 +1,461 @@
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+    <head>
+        <meta charset="utf-8">
+        <title>키워드로 장소검색하고 목록으로 표출하기</title>
+        <style>
+            table {
+                border-collapse: collapse;
+                width: 100%;
+                font-family: Arial, sans-serif;
+                color: #444;
+            }
+            th {
+                background-color: #00b8d4;
+                color: #fff;
+                font-weight: bold;
+                text-align: center;
+                padding: 0.5em;
+            }
+            td {
+                border: 1px solid #00b8d4;
+                padding: 0.5em;
+            }
+            tr:nth-child(odd) {
+                background-color: #f2f2f2;
+            }
+            tr:hover {
+                background-color: #00b8d4;
+                color: #fff;
+            }
+            .center {
+                text-align: center;
+            }
+        </style>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    </head>
+    <body>
+        <div style="float:left;width: 700px; height: 800px;">
+            <table align="center" border="1">
+                <thead style="text-align : center;">
+                    <tr>
+                        <th>병원이름</th>
+                        <th>병원주소</th>
+                        <th>운영시간</th>
+                        <th>병원 전화번호</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
+        <div style="position: absolute; right: 300px; bottom: 150px;">
+            <h3>버튼 클릭 후 마커에 마우스를 대보세요!</h3>
+            <nav>
+                <p>
+                    <button id="moveCenter">종로구</button>
+                    <button id="moveWest">강서구</button>
+                    <button id="moveSouth">강남구</button>
+                    <button id="moveNorth">강북구</button>
+                    <button id="moveEast">강동구</button>
+                </p>
+            </nav>
+            <div id="map" style="width:400px;height:300px;"></div>
+        </div>
+        <br>
+        <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=	03e86f847fb28d77b92bb9ed6517fb1c&libraries=services"></script>
+        <script type="text/javascript">
+            var markers = [];
+            // 지도 만들기
+            var mapContainer = document.getElementById('map'), // 지도를 표시할 div
+                mapOption = {
+                    center: new kakao.maps.LatLng(37.570412, 126.987670), // 지도의 중심좌표
+                    level: 5 // 지도의 확대 레벨
+                };
+            var map = new kakao.maps.Map(mapContainer, mapOption);
+            // 지도를 생성합니다
+            /* 데이터 연동 */
+            $("#moveCenter").click(function () {
+                $.ajax({
+                    url: "mapCenter",
+                    success: function (data1) {
+                        console.log(data1);
+                        var moveLatLon = new kakao.maps.LatLng(37.570412, 126.987670); // 종로구
+                        var level = map.getLevel();
+                        // console.log("통신성공시");
+                        map.setLevel(level = 6);
+                        // 지도 중심을 이동 시킵니다
+                        map.setCenter(moveLatLon);
+                        // const data = JSON.stringify(data1);
+                        // console.table(data1);
+                        // console.log(data.COMPANY_NAME);
+                        // console.log("ajax 통신 성공!")
+                        // console.log(data1);
+                        // console.table(data1);
+                        const $map = document.getElementById('map');
+                        function setMarkers(map) {
+                            for (var i = 0; i < markers.length; i++) {
+                                markers[i].setMap(map);
+                            } 
+                        }
+                        // 지도 위에 표시되고 있는 마커를 모두 제거합니다
+                        // 테이블 바디 삭제
+                        $('#tableBody').empty();
+                        for (var i = 0; i < markers.length; i++) {
+                            markers[i].setMap(null);
+                            delete markers[0];
+                            console.log(markers);
+                        }
+                        markers = [];
+                        // 가져온 데이터 돌리기
+                        for (let index in data1) {
+                            const title = data1[index].COMPANY_NAME;
+                            const address = data1[index].COMPANY_ADDRESS;
+                            const time = data1[index].COMPANY_TIME;
+                            const number = data1[index].COMPANY_PHONE;
+                            const lat = data1[index].COMPANY_ADDRESS_LATITUDE;
+                            const lng = data1[index].COMPANY_ADDRESS_LONGITUDE;
+                            const latlng = new kakao.maps.LatLng(lat, lng);
+                            // console.log(latlng);
+                            // console.log(title);
+                            console.log(address);
+                            const positions = [{
+                                    title: title,
+                                    latlng: latlng
+                                }]
+                            // 테이블 생성
+                            var tableTd = '<tr>';
+                            tableTd += '<td>' + title + '</td>';
+                            tableTd += '<td>' + address + '</td>';
+                            tableTd += '<td>' + time + '</td>';
+                            tableTd += '<td>' + number + '</td>';
+                            tableTd += '</tr>';
+                            // 테이블 바디 삭제
+                            $('#tableBody').append(tableTd);
+                            // 마커 이미지의 이미지 주소입니다
+                            var imageSrc = "https://i.postimg.cc/rmnYY3sk/DALL-E-2022-12-13-10-34-19-animal-hospital-illustrate-marke-removebg-preview.png";
+                            // console.log(title);
+                            // console.log(positions);
+                            // console.log(positions.length);
+                            /* 마커찍기 */
+                            for (var i = 0; i < positions.length; i++) {
+                                // 마커 이미지의 이미지 크기 입니다
+                                var imageSize = new kakao.maps.Size(30, 35);
+                                // 마커 이미지를 생성합니다
+                                var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
+                                // 마커를 생성합니다
+                                var marker = new kakao.maps.Marker({
+                                    position: positions[0].latlng, // 마커를 표시할 위치
+                                    image: markerImage, // 마커 이미지
+                                    clickable: true
+                                });
+                                var infowindow = new kakao.maps.InfoWindow({content: positions[i].title});
+                                (function (marker, infowindow) {
+                                    // 마커에 mouseover 이벤트를 등록하고 마우스 오버 시 인포윈도우를 표시합니다
+                                    kakao
+                                        .maps
+                                        .event
+                                        .addListener(marker, 'mouseover', function () {
+                                            infowindow.open(map, marker);
+                                        });
+                                    // 마커에 mouseout 이벤트를 등록하고 마우스 아웃 시 인포윈도우를 닫습니다
+                                    kakao
+                                        .maps
+                                        .event
+                                        .addListener(marker, 'mouseout', function () {
+                                            infowindow.close();
+                                        });
+                                })(marker, infowindow);
+                                // 마커 지도에 표시
+                                marker.setMap(map);
+                            } // 마커찍는 반복문
+                            markers.push(marker);
+                            console.log(markers);
+                        } // 넘어오는 데이터 받는 부분
+                    } // ajax 성공 시 실행 구문
+                }); // ajax 실행
+            });
+            // 클릭시 실행
+            // 종로 지역
+            /* 데이터 연동 */
+            $("#moveWest").click(function () {
+                $.ajax({
+                    url: "mapWest",
+                    success: function (data1) {
+                        console.log(data1);
+                        var moveLatLon = new kakao.maps.LatLng(37.561536, 126.826978); // 강서구
+                        var level = map.getLevel();
+                        map.setLevel(level = 6);
+                        map.setCenter(moveLatLon);
+                        const $map = document.getElementById('map');
+                        function setMarkers(map) {
+                            for (var i = 0; i < markers.length; i++) {
+                                markers[i].setMap(map);
+                            }
+                        }
+                        $('#tableBody').empty();
+                        for (var i = 0; i < markers.length; i++) {
+                            markers[i].setMap(null);
+                            delete markers[0];
+                            console.log(markers);
+                        }
+                        markers = [];
+                        for (let index in data1) {
+                            const title = data1[index].COMPANY_NAME;
+                            const address = data1[index].COMPANY_ADDRESS;
+                            const time = data1[index].COMPANY_TIME;
+                            const number = data1[index].COMPANY_PHONE;
+                            const lat = data1[index].COMPANY_ADDRESS_LATITUDE;
+                            const lng = data1[index].COMPANY_ADDRESS_LONGITUDE;
+                            const latlng = new kakao.maps.LatLng(lat, lng);
+                            console.log(address);
+                            const positions = [{
+                                    title: title,
+                                    latlng: latlng
+                                }]
+                            var tableTd = '<tr>';
+                            tableTd += '<td>' + title + '</td>';
+                            tableTd += '<td>' + address + '</td>';
+                            tableTd += '<td>' + time + '</td>';
+                            tableTd += '<td>' + number + '</td>';
+                            tableTd += '</tr>';
+                            $('#tableBody').append(tableTd);
+                            var imageSrc = "https://i.postimg.cc/rmnYY3sk/DALL-E-2022-12-13-10-34-19-animal-hospital-illustrate-marke-removebg-preview.png";
+                            for (var i = 0; i < positions.length; i++) {
+                                var imageSize = new kakao.maps.Size(30, 35);
+                                var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
+                                var marker = new kakao.maps.Marker({position: positions[0].latlng, image: markerImage, clickable: true});
+                                var infowindow = new kakao.maps.InfoWindow({content: positions[i].title});
+                                (function (marker, infowindow) {
+                                    kakao
+                                        .maps
+                                        .event
+                                        .addListener(marker, 'mouseover', function () {
+                                            infowindow.open(map, marker);
+                                        });
+                                    kakao
+                                        .maps
+                                        .event
+                                        .addListener(marker, 'mouseout', function () {
+                                            infowindow.close();
+                                        });
+                                })(marker, infowindow);
+                                marker.setMap(map);
+                            }
+                            markers.push(marker);
+                            console.log(markers);
+                        }
+                    }
+                });
+            });
+            $("#moveSouth").click(function () {
+                $.ajax({
+                    url: "mapSouth",
+                    success: function (data1) {
+                        console.log(data1);
+                        var moveLatLon = new kakao.maps.LatLng(37.494613, 127.065318); // 강남구
+                        var level = map.getLevel();
+                        map.setLevel(level = 6);
+                        map.setCenter(moveLatLon);
+                        const $map = document.getElementById('map');
+                        function setMarkers(map) {
+                            for (var i = 0; i < markers.length; i++) {
+                                markers[i].setMap(map);
+                            }
+                        }
+                        $('#tableBody').empty();
+                        for (var i = 0; i < markers.length; i++) {
+                            markers[i].setMap(null);
+                            delete markers[0];
+                            console.log(markers);
+                        }
+                        markers = [];
+                        for (let index in data1) {
+                            const title = data1[index].COMPANY_NAME;
+                            const address = data1[index].COMPANY_ADDRESS;
+                            const time = data1[index].COMPANY_TIME;
+                            const number = data1[index].COMPANY_PHONE;
+                            const lat = data1[index].COMPANY_ADDRESS_LATITUDE;
+                            const lng = data1[index].COMPANY_ADDRESS_LONGITUDE;
+                            const latlng = new kakao.maps.LatLng(lat, lng);
+                            console.log(address);
+                            const positions = [{
+                                    title: title,
+                                    latlng: latlng
+                                }]
+                            var tableTd = '<tr>';
+                            tableTd += '<td>' + title + '</td>';
+                            tableTd += '<td>' + address + '</td>';
+                            tableTd += '<td>' + time + '</td>';
+                            tableTd += '<td>' + number + '</td>';
+                            tableTd += '</tr>';
+                            $('#tableBody').append(tableTd);
+                            var imageSrc = "https://i.postimg.cc/rmnYY3sk/DALL-E-2022-12-13-10-34-19-animal-hospital-illustrate-marke-removebg-preview.png";
+                            for (var i = 0; i < positions.length; i++) {
+                                var imageSize = new kakao.maps.Size(30, 35);
+                                var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
+                                var marker = new kakao.maps.Marker({position: positions[0].latlng, image: markerImage, clickable: true});
+                                var infowindow = new kakao.maps.InfoWindow({content: positions[i].title});
+                                (function (marker, infowindow) {
+                                    kakao
+                                        .maps
+                                        .event
+                                        .addListener(marker, 'mouseover', function () {
+                                            infowindow.open(map, marker);
+                                        });
+                                    kakao
+                                        .maps
+                                        .event
+                                        .addListener(marker, 'mouseout', function () {
+                                            infowindow.close();
+                                        });
+                                })(marker, infowindow);
+                                marker.setMap(map);
+                            }
+                            markers.push(marker);
+                            console.log(markers);
+                        }
+                    }
+                });
+            });
+            $("#moveNorth").click(function () {
+                $.ajax({
+                    url: "mapNorth",
+                    success: function (data1) {
+                        console.log(data1);
+                        var moveLatLon = new kakao.maps.LatLng(37.631085, 127.023386); // 강북구
+                        var level = map.getLevel();
+                        map.setLevel(level = 6);
+                        map.setCenter(moveLatLon);
+                        const $map = document.getElementById('map');
+                        function setMarkers(map) {
+                            for (var i = 0; i < markers.length; i++) {
+                                markers[i].setMap(map);
+                            }
+                        }
+                        $('#tableBody').empty();
+                        for (var i = 0; i < markers.length; i++) {
+                            markers[i].setMap(null);
+                            delete markers[0];
+                            console.log(markers);
+                        }
+                        markers = [];
+                        for (let index in data1) {
+                            const title = data1[index].COMPANY_NAME;
+                            const address = data1[index].COMPANY_ADDRESS;
+                            const time = data1[index].COMPANY_TIME;
+                            const number = data1[index].COMPANY_PHONE;
+                            const lat = data1[index].COMPANY_ADDRESS_LATITUDE;
+                            const lng = data1[index].COMPANY_ADDRESS_LONGITUDE;
+                            const latlng = new kakao.maps.LatLng(lat, lng);
+                            console.log(address);
+                            const positions = [{
+                                    title: title,
+                                    latlng: latlng
+                                }]
+                            var tableTd = '<tr>';
+                            tableTd += '<td>' + title + '</td>';
+                            tableTd += '<td>' + address + '</td>';
+                            tableTd += '<td>' + time + '</td>';
+                            tableTd += '<td>' + number + '</td>';
+                            tableTd += '</tr>';
+                            $('#tableBody').append(tableTd);
+                            var imageSrc = "https://i.postimg.cc/rmnYY3sk/DALL-E-2022-12-13-10-34-19-animal-hospital-illustrate-marke-removebg-preview.png";
+                            for (var i = 0; i < positions.length; i++) {
+                                var imageSize = new kakao.maps.Size(30, 35);
+                                var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
+                                var marker = new kakao.maps.Marker({position: positions[0].latlng, image: markerImage, clickable: true});
+                                var infowindow = new kakao.maps.InfoWindow({content: positions[i].title});
+                                (function (marker, infowindow) {
+                                    kakao
+                                        .maps
+                                        .event
+                                        .addListener(marker, 'mouseover', function () {
+                                            infowindow.open(map, marker);
+                                        });
+                                    kakao
+                                        .maps
+                                        .event
+                                        .addListener(marker, 'mouseout', function () {
+                                            infowindow.close();
+                                        });
+                                })(marker, infowindow);
+                                marker.setMap(map);
+                            }
+                            markers.push(marker);
+                            console.log(markers);
+                        }
+                    }
+                });
+            });
+            $("#moveEast").click(function () {
+                $.ajax({
+                    url: "mapEast",
+                    success: function (data1) {
+                        console.log(data1);
+                        var moveLatLon = new kakao.maps.LatLng(37.549018, 127.146385); // 강동구
+                        var level = map.getLevel();
+                        map.setLevel(level = 6);
+                        map.setCenter(moveLatLon);
+                        const $map = document.getElementById('map');
+                        function setMarkers(map) {
+                            for (var i = 0; i < markers.length; i++) {
+                                markers[i].setMap(map);
+                            }
+                        }
+                        $('#tableBody').empty();
+                        for (var i = 0; i < markers.length; i++) {
+                            markers[i].setMap(null);
+                            delete markers[0];
+                            console.log(markers);
+                        }
+                        markers = [];
+                        for (let index in data1) {
+                            const title = data1[index].COMPANY_NAME;
+                            const address = data1[index].COMPANY_ADDRESS;
+                            const time = data1[index].COMPANY_TIME;
+                            const number = data1[index].COMPANY_PHONE;
+                            const lat = data1[index].COMPANY_ADDRESS_LATITUDE;
+                            const lng = data1[index].COMPANY_ADDRESS_LONGITUDE;
+                            const latlng = new kakao.maps.LatLng(lat, lng);
+                            console.log(address);
+                            const positions = [{
+                                    title: title,
+                                    latlng: latlng
+                                }]
+                            var tableTd = '<tr>';
+                            tableTd += '<td>' + title + '</td>';
+                            tableTd += '<td>' + address + '</td>';
+                            tableTd += '<td>' + time + '</td>';
+                            tableTd += '<td>' + number + '</td>';
+                            tableTd += '</tr>';
+                            $('#tableBody').append(tableTd);
+                            var imageSrc = "https://i.postimg.cc/rmnYY3sk/DALL-E-2022-12-13-10-34-19-animal-hospital-illustrate-marke-removebg-preview.png";
+                            for (var i = 0; i < positions.length; i++) {
+                                var imageSize = new kakao.maps.Size(30, 35);
+                                var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
+                                var marker = new kakao.maps.Marker({position: positions[0].latlng, image: markerImage, clickable: true});
+                                var infowindow = new kakao.maps.InfoWindow({content: positions[i].title});
+                                (function (marker, infowindow) {
+                                    kakao
+                                        .maps
+                                        .event
+                                        .addListener(marker, 'mouseover', function () {
+                                            infowindow.open(map, marker);
+                                        });
+                                    kakao
+                                        .maps
+                                        .event
+                                        .addListener(marker, 'mouseout', function () {
+                                            infowindow.close();
+                                        });
+                                })(marker, infowindow);
+                                marker.setMap(map);
+                            }
+                            markers.push(marker);
+                            console.log(markers);
+                        }
+                    }
+                });
+            });
+        </script>
+    </body>
+</html>

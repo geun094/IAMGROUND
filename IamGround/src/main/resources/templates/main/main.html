@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+    <head>
+        <meta charset="UTF-8">
+        <title>Insert title here</title>
+        <style>
+            .main_top {
+                height: 200px;
+                text-align: center;
+                position: relative;
+                z-index: 1;
+                bottom: 120px;
+            }
+            .main_content_wrap {
+                position: absolute;
+                left: 0;
+                width: 100%;
+                min-height: 100px;
+                background: url('../img/mainContainer.png') no-repeat left top;
+                z-index: 2;
+                bottom: 620px;
+            }
+            .main_area {
+                position: relative;
+                width: 1000px;
+                min-height: 745px;
+                margin: auto;
+            }
+            .main_wrap {
+                padding: 120px 0 85px;
+                min-height: calc(100vh - 50px);
+            }
+            .main_notice_wrap {
+                position: absolute;
+                top: 48px;
+                left: 56px;
+                width: 255px;
+            }
+            .more {
+                position: absolute;
+                bottom: 75px;
+                right: 5px;
+                display: block;
+                height: 10px;
+                padding: 0 10px 0 0;
+                font-size: 11px;
+                font-family: '돋움', 'Dotum';
+                color: #707070;
+                z-index: 3;
+            }
+            a:hover {
+                color: red;
+                cursor: pointer;
+            }
+            .notice_table {
+                top: 20px;
+                position: absolute;
+            }
+            .main_qna {
+                position: absolute;
+                top: 40px;
+                left: 365px;
+                width: 260px;
+                height: 100%;
+            }
+            .more2 {
+                position: absolute;
+                bottom: 65px;
+                right: 370px;
+                display: block;
+                height: 10px;
+                padding: 0 10px 0 0;
+                font-size: 11px;
+                font-family: '돋움', 'Dotum';
+                color: #707070;
+            }
+            .main_notice_wrap h1 span {
+                display: block;
+                height: 25px;
+                padding: 0 0 0 35px;
+                font-weight: bold;
+                color: #4b4a69;
+                font-size: 18px;
+                position: absolute;
+                bottom: 8px;
+                right: 100px;
+            }
+            .main_center h1 span {
+                display: block;
+                height: 25px;
+                padding: 0 0 0 35px;
+                font-weight: bold;
+                color: #4b4a69;
+                font-size: 18px;
+                position: absolute;
+                bottom: 60px;
+                left: 420px;
+            }
+            .main_right h1 span {
+                display: block;
+                height: 25px;
+                padding: 0 0 0 35px;
+                font-weight: bold;
+                color: #4b4a69;
+                font-size: 18px;
+                position: absolute;
+                bottom: 170px;
+                right: 120px;
+            }
+            .main_right {
+                position: absolute;
+                top: 45px;
+                left: 695px;
+                width: 255px;
+            }
+            .map {
+                height: 100%;
+                width: 100%;
+            }
+        </style>
+    </head>
+    <body>
+        <div th:replace="common/header.html"></div>
+        <div class="main_wrap">
+            <div class="main_area">
+                <div class="main_top">
+                    <img src="/img/mainCatAndDog2.png">
+                </div>
+                <div class="main_content_wrap">
+                    <div class="main_notice_wrap">
+                        <div class="main_left">
+                            <h1>
+                                <span>☆공지사항☆</span>
+                            </h1>
+                            <div class="notice_table">
+                                <table border="1">
+                                    <tr>
+                                        <th>글 번호</th>
+                                        <th>게시글 제목</th>
+                                        <th>작성자</th>
+                                        <th>조회수</th>
+                                        <th>작성일자</th>
+                                    </tr>
+                                    <tr th:each="notice : ${ noticeList }">
+                                        <td th:text="${ notice.noticeNo }"></td>
+                                        <td>
+                                            <a th:href="'/main/'+${main.noticeNo}" th:text="${ main.noticeTitle }"></a>
+                                        </td>
+                                        <td th:text="${ notice.promemName }"></td>
+                                        <td th:text="${ notice.noticeCount}"></td>
+                                        <td th:text="${ notice.noticeDate}"></td>
+                                    </tr>
+                                </table>
+                                <ul>
+                                    <a onclick="location.href='/notice/list'" class="more" title="공지사항 더보기">더보기</a>
+                                </ul>
+                            </div>
+                            <!-- notice_table -->
+                        </div>
+                        <!-- main_left -->
+                    </div>
+                    <!-- main_notice_wrap -->
+                    <div class="main_center">
+                        <h1>
+                            <span>☆QNA☆</span>
+                        </h1>
+                        <div class="main_qna">
+                            <table border="1">
+                                <tr>
+                                    <th>글번호</th>
+                                    <th>카테고리코드</th>
+                                    <th>글제목</th>
+                                    <th>글내용</th>
+                                    <th>작성일자</th>
+                                </tr>
+                                <tr th:each="board : ${ boardList }">
+                                    <td th:text="${ board.boardNo }"></td>
+                                    <td>
+                                        <a th:href="'/board/'+${ board.boardNo }" th:text="${ board.categoryCode }"></a>
+                                    </td>
+                                    <td th:text="${ board.boardTitle }"></td>
+                                    <td th:text="${ board.boardContent }"></td>
+                                    <td th:text="${ board.createdDate }"></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <!-- main_qna -->
+                        <a onclick="location.href='/board/list'" class="more2" title="공지사항 더보기">더보기</a>
+                    </div>
+                    <!-- main_center -->
+                    <div class="main_right">
+                        <h1>
+                            <span>병원 찾기</span>
+                        </h1>
+                        <div class="map">
+                            <a onclick="location.href='/api/searchCompany'"><img src="/img/mainMap.png" class="map"></a>
+                        </div>
+                    </div>
+                </div>
+                <!-- main_content_wrap -->
+            </div>
+            <!-- main_area -->
+        </div>
+        <!-- main_wrap -->
+        
+        <div th:replace="common/footer.html"></div>
+    </body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+    <meta charset="UTF-8">
+    <title>회원가입 페이지</title>
+    <style>
+        .regist-image01 {
+            display:flex;
+            flex-wrap:wrap;
+            align-items:flex-start;
+            margin:100px 0;
+        }
+        
+        .bnt1 {
+		  width: 250px;
+		  height: auto;
+		  display: inline-block;
+		}
+
+    </style>
+</head>
+<body>
+
+	<div th:replace="common/header.html"></div>
+
+	<h1 align="left">회원 가입</h1>
+    <hr>
+    <p align="center"><strong>가입 유형 선택</strong> → 회원 정보 입력 → 가입 신청 완료</p>
+	<hr>
+	<br>
+    <p text align="center">회원 구분에 따라 가입 절차에 차이가 있으니</p>
+    <p text align="center">반드시 본인이 해당하는 경우를 선택해주시기 바랍니다.</p>
+    <br>
+    <div align="center">
+    <div id="regist-button">
+        <img src="/img/일반회원.png" width="400" height="300"></img>
+        
+        <img src="/img/전문가회원.png" width="300" height="300"></img>
+    </div>
+	    <br>
+    <div id="regist-image01">
+	    <button onclick="location.href='/regist/regist-member'">일반회원</button>
+	    	<div class="bnt1"></div>
+	    <button onclick="location.href='/regist/regist-promember'">전문가회원</button>
+    </div>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    
+    </div>
+    
+    <div th:replace="common/footer.html"></div>
+</body>
+</html>

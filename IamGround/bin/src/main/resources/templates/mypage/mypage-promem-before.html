@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+<meta charset="UTF-8">
+<title>전문가 회원 - 마이페이지(승인 전)</title>
+</head>
+<body>
+
+	<div th:replace="common/header.html"></div>
+	
+	<h1 align="center">마이 페이지</h1>
+	<p align="center">관리자가 승인 요청을 처리 중입니다.</p>
+	<p align="center">잠시만 기다려 주세요.</p>
+	
+	<div align="center">
+	<form action="/mypage/mypage-promem-before-update" method="post">
+		<table>
+			<tr>
+				<td>프로필 사진</td>
+				<td><img th:src="@{'/mypage/profileImg?imgName=' + ${promemInfo.mypageProfile.profileFileRename}}" width="100px" height="100px"/></td>
+			</tr>
+			<tr>
+				<th>이름</th>
+				<td th:text="${promemInfo.promemName}"></td>
+			</tr>
+			
+			<tr>
+				<th>닉네임</th>
+				<td th:text="${promemInfo.promemNickname}"></td>
+			</tr>
+			<tr>
+				<th>전화번호</th>
+				<td th:text="${promemInfo.promemPhone}"></td>
+			</tr>
+			<tr>
+				<th>이메일</th>
+				<td th:text="${promemInfo.promemEmail}"></td>
+			</tr>
+			<tr>
+				<th>주소</th>
+				<td th:text="${promemInfo.promemAddress}"></td>
+			</tr>
+		</table>
+		
+		<button type="submit">회원정보 수정</button>
+		
+	</form>
+	</div>
+	<br>
+    <br>
+    <br>
+    <br>
+    <br>
+	<div th:replace="common/footer.html"></div>
+</body>
+</html>

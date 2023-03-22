@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<title>Insert title here</title>
+<link th:href="@{/css/board/registcss.css}" type="text/css" rel="stylesheet" />
+</head>
+<body>
+
+	<div th:include="common/header.html"></div><br><br>
+	<button class="btn2" onclick="location.href='/board/list'">작성취소</button></div>
+	<br><br> 
+	<div class="formdiv">
+		<form action="/board/regist" method="post" align="center">
+		<hr width= "800px">
+      	<select style="margin-left: 480px" class="item1" name="categoryCode" id="categoryCode">
+    	</select>
+		<hr width= "800px">
+     	<input id="input" style="margin-left: 480px" class="item1" type="text-overflow:ellipsis" name="boardTitle" placeholder="제목" >
+		<hr width= "800px">
+      	<textarea id="text" style="margin-left: 480px" cols="130" rows="30" class="item2" name="boardContent" placeholder="내용"></textarea>
+   	  	<button style="margin-left: 1180px" class="btn">등록</button></div>
+   </form>
+
+
+   <script>
+      function selectCategory(){
+           $.ajax({
+              url: "/board/category",
+              success: function(data){
+                 const $categoryCode = document.querySelector("#categoryCode");
+                 
+                 for(let index in data){
+                    $option = document.createElement("option")
+                    /* option태그의 value 속성은 해당 옵션이 선택될 떄 서버로 제출되는 값을 명시 */
+                    $option.value = data[index].categoryCode;
+                    $option.textContent = data[index].categoryName;
+                    
+                    $categoryCode.appendChild($option);           
+                 }
+              }, 
+              error: function(error){
+                console.log(error);              
+              }
+           });
+      };
+      selectCategory();
+   </script>
+          <div class="footer">
+              <p>Copyright (C) 2022 IAMGROUND. All rights reserved.</p>
+          </div>
+</body>
+</html>

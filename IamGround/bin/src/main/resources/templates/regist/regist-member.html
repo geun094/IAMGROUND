@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+    <title>회원가입-일반</title>
+
+	<script type = "text/javascript" >
+		setTimeout(function(){
+	    	window.history.forward();
+	    }, 0);	
+	</script>
+</head>
+<body>
+
+	<div th:replace="common/header.html"></div>
+	
+    <h1 align="left">회원 가입</h1>
+    <hr>
+    <p align="center">가입 유형 선택 → <strong>회원 정보 입력</strong> → 가입 신청 완료</p>
+	<hr>
+    <div>
+        <h2>일반회원 정보</h2>
+    </div>
+    <div align="center">
+    <form action="/regist/regist-member" method="post" id="registForm">
+  
+        <label>아이디</label>
+        <input type="text" name="memId" id="memId" onkeypress="idKey()">
+        <button type="button" id="checkMemId">중복확인</button>
+        <br>
+        <font size="1"><p>* 4~12자의 영문 대소문자와 숫자로만 입력</p></font>
+		<div><font id="memIdFeedback" size="2"></font></div>
+
+        <br>
+        
+        <div class="pwd">
+	        <label class="pwd1" for="inputValid">비밀번호</label>
+	        <input type="password" class="inputpwd" id="memPwd1" name="memPwd">
+	        <br>
+	        <font size="1"><p>* 4~12자의 영문 대소문자와 숫자로만 입력</p></font>
+	        <div class="valid-feedback"></div>
+		</div>
+		
+		<div class="checkpwd">
+	        <label class="pwd2" for="inputInvalid">비밀번호 확인</label>
+	        <input type="password" class="inputpwd is-invalid" id="memPwd2" name="checkMemPwd">
+	        <div><font id="pwd_feedback" size="2"></font></div>
+		</div>
+		
+        <br>
+        <label>이름</label>
+        <input type="text" id="memName" name="memName">
+        <br>
+        
+       	<label>성별</label>
+	        <select name="memGender">
+		        <option value="null">선택안함</option>
+		        <option value="M">남성</option>
+		        <option value="F">여성</option>
+	        </select>
+        <br>
+        
+        <label>전화번호</label>
+        <input type="tel" name="memPhone">
+        <br>
+        
+        <label>이메일</label>
+        <input type="email" name="memEmail" id="memEmail" onkeypress="emailKey()">
+        <button type="button" id="checkMemEmail">중복확인</button>
+		<div><font id="memEmailFeedback" size="2"></font></div>
+        <br>
+        
+		<label>주소</label>
+        <input type="text" id="addressPostcode" placeholder="우편번호">
+        <input type="button" onclick="findAddressMem()" value="우편번호 찾기">
+        <br>
+        <input type="text" id="address" placeholder="주소">
+        <br>
+        <input type="text" id="detailAddress" placeholder="상세주소">
+        <input type="text" id="extraAddress" placeholder="참고항목">
+        <br>
+		<label>닉네임</label>
+		<input type="text" name="memNickname" id="memNickname" onkeypress="nicknameKey()">
+        <button type="button" id="checkMemNickname">중복확인</button>
+		<div><font id="memNicknameFeedback" size="2"></font></div>
+        <br>
+		<br>
+		
+		<input type="hidden" name="memAddress" id="memAddress">
+		<input type="hidden" name="idCheckYn" id="idCheckYn" value="N">
+		<input type="hidden" name="emailCheckYn" id="emailCheckYn" value="N">
+		<input type="hidden" name="nicknameCheckYn" id="nicknameCheckYn" value="N">
+		
+		<button type="button" name="registBtn" id="registBtn" onclick="checkForm()">가입신청</button>
+		
+    </form>
+       <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+
+    <br>
+    </div>
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <script type= text/javascript>
+    
+ 	/* 아이디 중복확인 */   
+ 	$("#checkMemId").click(function() {
+ 		var checkId = document.getElementById("memId").value;
+ 		console.log(checkId)
+ 		var memberDTO = {
+ 			"memId":checkId
+ 		};
+ 		
+ 		$.ajax({
+ 			type:"post",
+ 			url:"/regist/checkMemId",
+ 			data: JSON.stringify(memberDTO),
+ 			dataType: "json",
+ 			contentType: "application/json;charset=UTF-8",
+ 			success: function(memIdcheckResult) {
+ 				if(memIdcheckResult == 1) {
+ 					$("#memIdFeedback").html('이미 사용중인 아이디입니다.');
+ 					$("#memIdFeedback").attr('color', '#ff0000');
+ 				} else {
+ 					$("#memIdFeedback").html('사용 가능한 아이디입니다.');
+ 					$("#memIdFeedback").attr('color', 'green');
+ 					$("#idCheckYn").val("Y");
+ 				}
+ 			},
+ 			error: function() {
+ 				alert("서버 요청 실패");
+ 			}
+ 		});
+ 	});
+
+ 	/* 이메일 중복확인 */   
+ 	$("#checkMemEmail").click(function() {
+ 		var checkEmail = document.getElementById("memEmail").value;
+ 		console.log(checkEmail)
+ 		var memberDTO = {
+ 			"memEmail":checkEmail
+ 		};
+ 		
+ 		$.ajax({
+ 			type:"post",
+ 			url:"/regist/checkMemEmail",
+ 			data: JSON.stringify(memberDTO),
+ 			dataType: "json",
+ 			contentType: "application/json;charset=UTF-8",
+ 			success: function(memEmailCheckResult) {
+ 				if(memEmailCheckResult == 1) {
+ 					$("#memEmailFeedback").html('이미 사용중인 이메일입니다.');
+ 					$("#memEmailFeedback").attr('color', '#ff0000');
+ 				} else {
+ 					$("#memEmailFeedback").html('사용 가능한 이메일입니다.');
+ 					$("#memEmailFeedback").attr('color', 'green');
+ 					$("#emailCheckYn").val("Y");
+ 				}
+ 			},
+ 			error: function() {
+ 				alert("서버 요청 실패");
+ 			}
+ 		});
+ 	});
+ 	
+ 	/* 닉네임 중복확인 */   
+ 	$("#checkMemNickname").click(function() {
+ 		var checkNickname = document.getElementById("memNickname").value;
+ 		console.log(checkNickname)
+ 		var memberDTO = {
+ 			"memNickname":checkNickname
+ 		};
+ 		
+ 		$.ajax({
+ 			type:"post",
+ 			url:"/regist/checkMemNickname",
+ 			data: JSON.stringify(memberDTO),
+ 			dataType: "json",
+ 			contentType: "application/json;charset=UTF-8",
+ 			success: function(memNicknameCheckResult) {
+ 				if(memNicknameCheckResult == 1) {
+ 					$("#memNicknameFeedback").html('이미 사용중인 닉네임입니다.');
+ 					$("#memNicknameFeedback").attr('color', '#ff0000');
+ 				} else {
+ 					$("#memNicknameFeedback").html('사용 가능한 닉네임입니다.');
+ 					$("#memNicknameFeedback").attr('color', 'green');
+ 					$("#nicknameCheckYn").val("Y");
+ 					
+ 				}
+ 			},
+ 			error: function() {
+ 				alert("서버 요청 실패");
+ 			}
+ 		});
+ 	});
+ 	
+ 	/* 비밀번호 확인 */
+	$("#memPwd2").keyup(function() {
+
+		let pass1 = document.getElementById("memPwd1").value;
+		let pass2 = document.getElementById("memPwd2").value;
+		
+		if (pass1 != "" || pass2 != "") {
+			if(pass1 == pass2) {
+				$("#pwd_feedback").html('비밀번호가 일치합니다.');
+				$("#pwd_feedback").attr('color', 'green');
+				$("#memPwd2").addClass("is-valid");
+				$("#memPwd2").removeClass("is-invalid");
+			} else {
+				$("#pwd_feedback").html('비밀번호가 일치하지 않습니다.');
+				$("#pwd_feedback").attr('color', '#ff0000');
+				$("#memPwd2").removeClass("is-valid");
+				$("#memPwd2").addClass("is-invalid");
+			}
+		}
+	})
+ 	    
+    /* 주소 검색 */
+    function findAddressMem(){
+        new daum.Postcode({
+            oncomplete: function(data) {
+                var addr = '';    
+                var extraAddr = '';   
+
+                if (data.userSelectedType === 'R') {
+                    addr = data.roadAddress;
+                } else {
+                    addr = data.jibunAddress;
+                }
+
+                if(data.userSelectedType === 'R') {
+                    if(data.bname !== '' && /[동|로|가]$/g.test(data.bname)){
+                        extraAddr += data.bname;
+                    }
+
+                    if(data.buildingName !== '' && data.apartment === 'Y') {
+                        extraAddr += (extraAddr !== '' ? ',' + data.buildingName : data.buildingName);
+                    }
+
+                    if(extraAddr !== ''){
+                        extraAddr = ' (' + extraAddr + ')';
+
+                    document.getElementById("extraAddress").value = extraAddr;
+                    } else {
+                    document.getElementById("extraAddress").value = '';
+                    }
+
+                document.getElementById('addressPostcode').value = data.zonecode;
+                document.getElementById('address').value = addr;
+                document.getElementById('detailAddress').focus();
+                }
+            }
+        	
+        }).open();
+    }
+ 	
+ 	function checkForm () {
+ 		
+ 		addAddress();
+ 		
+ 		var id = document.getElementById("memId");
+ 		var pwd = document.getElementById("memPwd1");
+ 		var pwdCheck = document.getElementById("memPwd2");
+ 		var name = document.getElementById("memName");
+ 		var address = document.getElementById("memAddress");
+ 		var phone = document.getElementById("memPhone");
+ 		var email = document.getElementById("memEmail");
+ 		var nickname = document.getElementById("memNickname");
+ 		
+ 		var flag = true;
+ 		
+ 		if(id.value == '') {
+ 			alert("아이디를 입력하세요.");
+ 			flag = false;
+ 		}
+ 		
+ 		var idRegExp =  /^[a-zA-z0-9]{4,12}$/; 
+ 		if(!idRegExp.test(id.value)) {
+ 			alert("아이디는 영문 대소문자와 숫자 4~12자리로 입력해주세요.")
+ 		}
+ 		
+ 		if(pwd.value == '') {
+ 			alert("비밀번호를 입력하세요.");
+ 			flag = false;
+ 		}
+ 		
+ 		var pwdRegExp =  /^[a-zA-z0-9]{4,12}$/; 
+ 		if(!pwdRegExp.test(pwd.value)) {
+ 			alert("비밀번호는 영문 대소문자와 숫자 4~12자리로 입력해주세요.")
+ 		}
+ 		
+ 		if(pwdCheck.value == '') {
+ 			alert("비밀번호를 확인해주세요.");
+ 			flag = false;
+ 		}
+ 		
+ 		if(name.value == '') {
+ 			alert("이름을 입력하세요.");
+ 			flag = false;
+ 		}
+ 	
+ 		if(address.value == '') {
+ 			alert("주소를 입력하세요.");
+ 			flag = false;
+ 		}
+ 		/* if(phone.value == '') {
+ 			alert("전화번호를 입력하세요.");
+ 			flag = false;
+ 		} */
+ 		if(email.value == '') {
+ 			alert("이메일을 입력하세요.");
+ 			flag = false;
+ 		}
+ 		if(nickname.value == '') {
+ 			alert("닉네임을 입력하세요.");
+ 			flag = false;
+ 		}
+
+ 		if ($("#idCheckYn").val() == "N") {
+			alert("아이디를 중복 확인해주세요.");
+			flag = false;
+		}
+ 		
+ 		if ($("#emailCheckYn").val() == "N") {
+			alert("이메일을 중복 확인해주세요.");
+			flag = false;
+		}
+ 		
+ 		if ($("#nicknameCheckYn").val() == "N") {
+			alert("닉네임을 중복 확인해주세요.");
+			flag = false;
+		}
+ 		
+ 		if(flag)
+ 	 	document.querySelector("#registForm").submit();
+ 	}
+ 	
+ 	function idKey() {
+ 		$("#idCheckYn").val("N");
+ 	}
+ 	
+ 	function emailKey() {
+ 		$("#emailCheckYn").val("N");
+ 	}
+ 	
+ 	function nicknameKey() {
+ 		$("#nicknameCheckYn").val("N");
+ 	}
+ 	
+ 	/* 주소값 합치기 */
+ 	function addAddress() {
+ 		var address = document.getElementById('address').value;
+ 		var detailAddress = document.getElementById('detailAddress').value;
+ 		document.getElementById('memAddress').value = address + " " + detailAddress;
+ 	}
+ 	
+    </script>
+    
+    <div th:replace="common/footer.html"></div>
+
+</body>
+</html>
